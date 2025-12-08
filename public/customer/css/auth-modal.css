@@ -1,0 +1,528 @@
+/* PURPOSE: Auth modal styles — login and register modals with split design */
+
+/* Auth Modal Base */
+.auth-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  backdrop-filter: blur(4px);
+}
+
+.auth-modal-content {
+  background: #ffffff;
+  border-radius: 20px;
+  max-width: 950px;
+  width: 92%;
+  max-height: 94vh; /* keep within viewport */
+  overflow: hidden;   /* remove outer scroll bar */
+  position: relative;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.22);
+}
+
+.auth-modal-close {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: transparent;
+  border: none;
+  font-size: 28px;
+  color: #355f4c;
+  cursor: pointer;
+  z-index: 10;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s;
+  font-weight: 300;
+  line-height: 1;
+}
+
+.auth-modal-close:hover {
+  background: #f5f5f5;
+  color: #2E5D47;
+}
+
+#auth-modal-body {
+  padding: 0;
+}
+
+/* Register Modal Split Design */
+.auth-modal-content .register-split {
+  display: grid;
+  grid-template-columns: 0.65fr 1.75fr; /* thinner left, wider right */
+  min-height: 480px; /* reduced to fit content without scroll */
+}
+
+.auth-modal-content .register-branding {
+  background: linear-gradient(135deg, #2E5D47, #1a4a2f);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 30px;
+  position: relative;
+}
+
+.auth-modal-content .brand-content {
+  text-align: center;
+  color: white;
+  position: relative;
+  z-index: 2;
+}
+
+.auth-modal-content .brand-logo {
+  width: 180px;
+  height: auto;
+  margin: 0 auto 40px auto;
+  display: block;
+  filter: brightness(0) invert(1);
+}
+
+.auth-modal-content .brand-content h1 {
+  font-size: 24px;
+  font-weight: 900;
+  letter-spacing: 2.5px;
+  margin: 0 0 30px 0;
+  font-family: "Poppins", "Segoe UI", "Arial", sans-serif;
+  text-transform: uppercase;
+}
+
+.auth-modal-content .brand-content p {
+  font-size: 11px;
+  line-height: 1.8;
+  letter-spacing: 1.2px;
+  font-weight: 600;
+  text-transform: uppercase;
+  opacity: 0.95;
+}
+
+.auth-modal-content .brand-content p i {
+  margin-right: 6px;
+  opacity: 0.9;
+}
+
+.auth-modal-content .register-form-panel {
+  background: #fff;
+  padding: 28px 40px; /* reduced padding */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  overflow-y: auto; /* ensure inner content can scroll */
+  max-height: calc(94vh - 60px); /* keep inside viewport */
+  padding-bottom: 20px; /* reduced bottom padding */
+}
+
+.auth-modal-content .register-form-panel h2 {
+  color: #2E5D47;
+  font-size: 24px;
+  font-weight: 800;
+  margin-bottom: 12px;
+  font-family: "Poppins", "Segoe UI", sans-serif;
+}
+
+.auth-modal-content .form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.auth-modal-content .form-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.auth-modal-content .form-col label {
+  margin-bottom: 6px;
+  color: #2E5D47;
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: 0.3px;
+  font-family: "Poppins", "Segoe UI", sans-serif;
+}
+
+.auth-modal-content .form-col input {
+  padding: 12px 12px;
+  border-radius: 10px;
+  border: 1.5px solid rgba(46,93,71,0.25);
+  background-color: #ffffff;
+  font-size: 13px;
+  transition: all 0.2s;
+  font-family: "Poppins", "Segoe UI", sans-serif;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.auth-modal-content .form-col input:focus {
+  outline: none;
+  border-color: #2E5D47;
+  background-color: #fff;
+  box-shadow: 0 0 0 3px rgba(46, 93, 71, 0.14);
+}
+
+/* Full-width form row for address */
+.auth-modal-content .form-row-full {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 12px;
+}
+
+.auth-modal-content .form-row-full label {
+  color: #2E5D47;
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: 0.3px;
+  margin-bottom: 6px;
+  font-family: "Poppins", "Segoe UI", sans-serif;
+}
+
+.auth-modal-content .form-row-full input {
+  padding: 12px 12px;
+  border-radius: 10px;
+  border: 1.5px solid rgba(46,93,71,0.25);
+  background-color: #ffffff;
+  font-size: 13px;
+  transition: all 0.2s;
+  font-family: "Poppins", "Segoe UI", sans-serif;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.auth-modal-content .form-row-full input:focus {
+  outline: none;
+  border-color: #2E5D47;
+  background-color: #fff;
+  box-shadow: 0 0 0 3px rgba(46, 93, 71, 0.14);
+}
+
+/* Error Messages */
+.error-message {
+  display: none;
+  color: #e74c3c;
+  font-size: 12px;
+  margin-top: 5px;
+  font-weight: 600;
+  font-family: "Century Gothic", sans-serif;
+  padding-left: 4px;
+}
+
+.error-message.show {
+  display: block;
+}
+
+/* Error state for inputs */
+.auth-modal-content input.error {
+  border-color: #e74c3c !important;
+  background-color: #fff5f5 !important;
+}
+
+/* Password Strength Indicator */
+.password-strength {
+  margin-top: 6px;
+}
+
+.strength-bar {
+  width: 100%;
+  height: 3px;
+  background-color: rgba(46,93,71,0.15);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 3px;
+}
+
+.strength-fill {
+  height: 100%;
+  width: 0%;
+  transition: all 0.3s ease;
+  border-radius: 2px;
+}
+
+.strength-fill.weak {
+  width: 33%;
+  background-color: #e74c3c;
+}
+
+.strength-fill.medium {
+  width: 66%;
+  background-color: #f59e0b;
+}
+
+.strength-fill.strong {
+  width: 100%;
+  background-color: #27ae60;
+}
+
+.strength-text {
+  font-size: 10px;
+  font-weight: 600;
+  font-family: "Poppins", "Segoe UI", sans-serif;
+  color: #4b6a5b;
+  display: block;
+}
+
+.strength-text.weak {
+  color: #e74c3c;
+}
+
+.strength-text.medium {
+  color: #f39c12;
+}
+
+.strength-text.strong {
+  color: #27ae60;
+}
+
+.auth-modal-content .password-wrapper {
+  position: relative;
+}
+
+.auth-modal-content .password-wrapper input {
+  padding-right: 45px;
+}
+
+.auth-modal-content .password-toggle {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  color: #999;
+  cursor: pointer;
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+}
+
+.auth-modal-content .password-toggle:hover {
+  color: #2E5D47;
+}
+
+.auth-modal-content .btn-main {
+  margin-top: 6px;
+  padding: 12px 24px;
+  background-color: #2E5D47;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: "Poppins", "Segoe UI", sans-serif;
+  width: 100%;
+  letter-spacing: 0.3px;
+}
+
+.auth-modal-content .btn-main:hover {
+  background-color: #1a4a2f;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(46, 93, 71, 0.3);
+}
+
+.auth-modal-content .btn-main.guest {
+  background-color: #FFD966;
+  color: #1f5538;
+  border: 2px solid #FFD966;
+  margin-top: 12px;
+  transition: background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.auth-modal-content .btn-main.guest:hover {
+  background-color: #f2c84f;
+  color: #1f5538;
+  border-color: #f2c84f;
+  box-shadow: 0 2px 8px rgba(31, 85, 56, 0.15);
+  transform: none;
+}
+
+.auth-modal-content .auth-switch {
+  text-align: center;
+  margin-top: 14px;
+  font-size: 13px;
+  color: #555;
+  font-family: "Poppins", "Segoe UI", sans-serif;
+}
+
+.auth-modal-content .auth-switch a {
+  color: #2E5D47;
+  text-decoration: none;
+  font-weight: 700;
+  margin-left: 4px;
+}
+
+.auth-modal-content .auth-switch a:hover {
+  text-decoration: underline;
+}
+
+/* Login Modal (Centered Clean Design) */
+.auth-modal-content .login-wrapper {
+  max-width: 420px;
+  margin: 0 auto;
+  padding: 40px 40px;
+}
+
+.auth-modal-content .login-wrapper h2 {
+  color: #2E5D47;
+  font-size: 32px;
+  font-weight: 800;
+  margin: 0 0 40px 0;
+  text-align: center;
+  font-family: "Poppins", "Segoe UI", sans-serif;
+  letter-spacing: 1px;
+}
+
+.auth-modal-content .login-wrapper .auth-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.auth-modal-content .login-wrapper .form-group {
+  margin-bottom: 20px;
+}
+
+.auth-modal-content .login-wrapper label {
+  display: block;
+  margin-bottom: 10px;
+  color: #2E5D47;
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 0.5px;
+  font-family: "Poppins", "Segoe UI", sans-serif;
+}
+
+.auth-modal-content .login-wrapper input {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 10px;
+  border: 1.5px solid rgba(46,93,71,0.25);
+  background-color: #ffffff;
+  font-size: 14px;
+  box-sizing: border-box;
+  font-family: "Poppins", "Segoe UI", sans-serif;
+}
+
+.auth-modal-content .login-wrapper input:focus {
+  outline: none;
+  border-color: #2E5D47;
+  background-color: #fff;
+  box-shadow: 0 0 0 3px rgba(46, 93, 71, 0.1);
+}
+
+.auth-modal-content .btn-main.google {
+  background: #ffffff;
+  color: #333333;
+  border: 2px solid #e0e0e0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.auth-modal-content .btn-main.google:hover {
+  background: #f7f7f7;
+  border-color: #d5d5d5;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .auth-modal-content .register-split {
+    grid-template-columns: 1fr;
+    min-height: auto;
+  }
+  .auth-modal-content .register-branding {
+    padding: 30px 20px;
+    min-height: 200px;
+  }
+  
+  .auth-modal-content .brand-logo {
+    width: 140px;
+    height: auto;
+    margin: 0 auto 30px auto;
+  }
+  
+  .auth-modal-content .brand-content h1 {
+    font-size: 20px;
+    margin-bottom: 24px;
+  }
+  
+  .auth-modal-content .brand-content p {
+    font-size: 10px;
+    line-height: 1.6;
+  }
+  .auth-modal-content .register-form-panel {
+    padding: 28px 26px; /* reduce padding on small screens */
+    max-height: calc(94vh - 260px);
+    overflow-y: auto; /* inner only */
+  }
+  .auth-modal-content {
+    width: 95%;
+    max-height: 95vh;
+    overflow: hidden; /* no outer scroll */
+  }
+  .auth-modal-content .login-wrapper {
+    padding: 40px 30px;
+    max-width: 100%;
+  }
+  
+  .auth-modal-content .login-wrapper h2 {
+    font-size: 28px;
+  }
+}
+
+/* Make login modal body thinner */
+.auth-modal-content.login-narrow {
+  max-width: 520px;
+  width: 92%;
+}
+
+/* Additional responsive breakpoints */
+@media (max-width: 600px) {
+  .auth-modal-content {
+    width: 98%;
+    border-radius: 12px;
+  }
+  
+  .auth-modal-content .brand-logo {
+    width: 100px;
+    margin: 0 auto 20px auto;
+  }
+  
+  .auth-modal-content .brand-content h1 {
+    font-size: 18px;
+    margin-bottom: 20px;
+  }
+  
+  .auth-modal-content .brand-content p {
+    font-size: 9px;
+    line-height: 1.5;
+  }
+  
+  .auth-modal-content .register-form-panel {
+    padding: 20px;
+  }
+  
+  .auth-modal-content .form-row {
+    grid-template-columns: 1fr;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  
+  .auth-modal-content .login-wrapper {
+    padding: 30px 20px;
+  }
+  
+  .auth-modal-content .login-wrapper h2 {
+    font-size: 24px;
+    margin-bottom: 30px;
+  }
+}

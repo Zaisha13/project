@@ -1,0 +1,158 @@
+/* PURPOSE: Profile page styles — layout for profile card, photo upload and form controls. */
+ .body, body { font-family: "Century Gothic", sans-serif; background: linear-gradient(135deg, #f5f1e6 0%, #faf9f4 100%); color: #2E5D47; margin: 0; padding: 0; overflow-x: hidden; }
+ @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+/* header styles are provided by shared header.css */
+.profile-main { width:100%; margin:0; padding: 0; min-height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+/* Layout: two-column flex with left navigation and right content */
+.profile-card { display: flex; width: 100%; height: calc(100vh - 84px); gap: 0; overflow: hidden; }
+/* Left sidebar fixed width, not scrollable */
+.profile-sidebar { width: 280px; height: auto; background: #FAF9F4; border-right: 1px solid rgba(46, 93, 71, 0.12); padding:28px 20px; display:flex; flex-direction:column; justify-content:flex-start; gap:20px; flex-shrink: 0; overflow: hidden; position: fixed; top: 84px; left: 0; bottom: 0; }
+/* Profile avatar */
+.profile-avatar { display:flex; justify-content:center; align-items:center; }
+.avatar-circle { width: 88px; height: 88px; border-radius:50%; background: #2E5D47; display:flex; justify-content:center; align-items:center; color:#ffffff; font-size:40px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+.profile-title { font-weight:800; color:#2E5D47; font-size:18px; letter-spacing:0.5px; text-align:center; }
+.profile-nav { display:flex; flex-direction:column; gap:12px; }
+/* Sidebar navigation – clean, professional, matches dashboard palette */
+.nav-item { text-align:left; padding:12px 16px; border-radius:12px; border:1px solid rgba(46, 93, 71, 0.18); background:#ffffff; color:#234736; font-weight:600; cursor:pointer; transition:all .2s ease; font-size:14px; display:flex; align-items:center; gap:10px; box-shadow: 0 2px 6px rgba(0,0,0,0.04); }
+.nav-item i { font-size:18px; width:20px; text-align:center; color:#2E5D47; }
+.nav-item.active { background: linear-gradient(135deg, #2E5D47 0%, #3a6d54 100%); border-color:#2E5D47; color:#ffffff; box-shadow: 0 4px 12px rgba(46, 93, 71, 0.18); }
+.nav-item.active i { color:#ffffff; }
+.nav-item:hover:not(.active) { background:#f2f7f4; border-color: rgba(46, 93, 71, 0.28); }
+.logout-link { margin-top:16px; background:linear-gradient(135deg, #d9534f 0%, #c9302c 100%); color:#ffffff; border:none; padding:14px 18px; border-radius:14px; cursor:pointer; font-weight:800; box-shadow: 0 4px 12px rgba(217, 83, 79, 0.25); transition: all 0.3s ease; flex-shrink: 0; }
+.logout-link:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(217, 83, 79, 0.35); }
+
+/* Right content fills remaining space, scrollable vertically */
+.right-col { flex: 1; background: transparent; padding:24px 32px; overflow-y: auto; overflow-x: hidden; height: auto; position: fixed; top: 84px; left: 280px; right: 0; bottom: 0; display:flex; flex-direction:column; align-items:center; }
+.right-col h2 { margin:0 0 12px 0; font-size:26px; font-weight:700; color: var(--primary-green); font-family: 'Poppins', "Century Gothic", sans-serif; text-shadow: none; width:100%; max-width: 1000px; text-align: center; }
+/* Form card styling */
+#profile-form { max-width: 720px; width:100%; margin:0 auto; background: linear-gradient(135deg, #ffffff 0%, #fdfcf7 100%); padding:20px 28px; border-radius:14px; box-shadow: 0 8px 32px rgba(0,0,0,0.08); border: 1px solid rgba(46, 93, 71, 0.08); }
+/* Form row and column layout matching register modal */
+#profile-form .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 10px; }
+#profile-form .form-col { display: flex; flex-direction: column; }
+#profile-form .form-row-full { display: flex; flex-direction: column; margin-bottom: 10px; }
+/* Label and input styling */
+#profile-form .form-col label, #profile-form .form-row-full label { font-weight:700; margin-bottom:4px; font-size:14px; color:#2E5D47; letter-spacing:0.3px; }
+#profile-form .form-col input, #profile-form .form-col textarea, #profile-form .form-row-full input, #profile-form .form-row-full textarea { padding:10px 12px; border-radius:10px; border:2px solid #e0e0e0; background:#f8f8f8; font-size:14px; transition: all 0.3s ease; color:#1e3852; width:100%; box-sizing:border-box; font-family: "Century Gothic", sans-serif; }
+#profile-form .form-col input:focus, #profile-form .form-col textarea:focus, #profile-form .form-row-full input:focus, #profile-form .form-row-full textarea:focus { outline:none; border-color:#2E5D47; background:#ffffff; box-shadow: 0 0 0 3px rgba(46, 93, 71, 0.1); }
+#profile-form .form-col input.invalid, #profile-form .form-col textarea.invalid, #profile-form .form-row-full input.invalid, #profile-form .form-row-full textarea.invalid { border-color: #d9534f; box-shadow: 0 0 0 3px rgba(217,83,79,0.1); }
+/* Legacy field-row support */
+.field-row { margin-bottom:16px; display:flex; flex-direction:column; }
+.field-row label { font-weight:800; margin-bottom:6px; font-size:13px; color:#2E5D47; letter-spacing:0.3px; }
+.field-row input, .field-row textarea, .field-row select { padding:10px 14px; border-radius:10px; border:2px solid #d4e8d8; background:#ffffff; font-size:14px; transition: all 0.3s ease; color:#1e3852; }
+.field-row input:focus, .field-row textarea:focus, .field-row select:focus { outline:none; border-color:#2E5D47; box-shadow: 0 0 0 4px rgba(46, 93, 71, 0.1); }
+.field-row input.invalid, .field-row textarea.invalid, .field-row select.invalid { border-color: #d9534f; box-shadow: 0 0 0 4px rgba(217,83,79,0.1); }
+/* Password field with eye icon container */
+.field-row > div[style*="position: relative"] { width: 100%; }
+.field-row > div[style*="position: relative"] input { width: 100%; }
+.field-row > div[style*="position: relative"] button:hover { color: #1e3852; opacity: 0.8; }
+.error-text { color:#d9534f; font-size:12px; margin-top:3px; min-height:14px; font-weight:600; }
+.small-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; max-width: 720px; }
+/* Narrower fields for username, email, phone */
+.field-row #username, .field-row #email, .field-row #phone { max-width: 460px; }
+.actions-row { display:flex; gap:12px; margin-top:16px; }
+.btn { padding:10px 18px; border-radius:10px; border:none; background:transparent; color:#2E5D47; cursor:pointer; font-size:14px; font-weight:800; letter-spacing:0.5px; transition: all 0.3s ease; box-shadow: 0 3px 8px rgba(0,0,0,0.08); }
+.btn#save-profile, .btn#reset-password { font-weight:500; }
+.btn:hover { transform: translateY(-2px); box-shadow: 0 5px 16px rgba(0,0,0,0.12); }
+.btn.primary { background: linear-gradient(135deg, #2E5D47 0%, #3a6d54 100%); color:#ffffff; border-color:#2E5D47; box-shadow: 0 4px 12px rgba(46, 93, 71, 0.25); }
+.btn.primary:hover { box-shadow: 0 6px 20px rgba(46, 93, 71, 0.35); }
+
+/* Make only the Order History content scrollable */
+#history-section { width:100%; max-width: 1000px; margin:0 auto; flex: 1; display: flex; flex-direction: column; min-height: 0; padding: 0 16px; box-sizing: border-box; align-items: center; }
+#order-history-list { flex: 1; overflow-y: auto; overflow-x: hidden; padding-right: 4px; min-height: 0; width: 100%; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; }
+
+/* Order history table styles */
+.history-table { width:100%; max-width: 100%; display:block; background:linear-gradient(135deg, #ffffff 0%, #fdfcf7 100%); border:1px solid rgba(46, 93, 71, 0.12); border-radius:18px; overflow-x: hidden; overflow-y: visible; box-shadow: 0 6px 24px rgba(0,0,0,0.06); box-sizing: border-box; margin: 0 auto; }
+.history-row { display:grid; grid-template-columns: 0.9fr 1.2fr 2fr 1.2fr 1.1fr 1.2fr; align-items:center; padding:10px 12px; border-top:1px solid rgba(46, 93, 71, 0.08); cursor:pointer; transition: all 0.3s ease; width: 100%; box-sizing: border-box; }
+.history-row:first-child { border-top:none; background: linear-gradient(135deg, #2E5D47 0%, #3a6d54 100%); font-weight:800; color:#ffffff; cursor:default; text-transform: uppercase; letter-spacing: 0.5px; font-size: 11px; text-align: center; }
+.history-row:hover:not(:first-child) { background:#f2f7f4; transform: translateX(4px); box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+.history-row .col { padding:4px 8px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 13px; text-align: center; box-sizing: border-box; }
+.history-row .col.act { text-align:center; padding: 4px 8px; }
+.history-row .col.act .btn { font-size: 11px; padding: 6px 14px; white-space: nowrap; min-width: 85px; }
+.status-badge { display:inline-block; padding:4px 10px; border-radius:18px; font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:0.5px; box-shadow: 0 2px 4px rgba(0,0,0,0.08); }
+.status-badge.pending { background:linear-gradient(135deg, #fff5cc 0%, #ffeb99 100%); color:#997404; }
+.status-badge.approved { background:linear-gradient(135deg, #c8e6c9 0%, #a5d6a7 100%); color:#2e7d32; }
+.status-badge.out-for-delivery { background:linear-gradient(135deg, #b3e5fc 0%, #81d4fa 100%); color:#0277bd; }
+.status-badge.completed { background:linear-gradient(135deg, #c8e6c9 0%, #a5d6a7 100%); color:#2e7d32; }
+.status-badge.cancelled { background:linear-gradient(135deg, #ffcdd2 0%, #ef9a9a 100%); color:#c62828; }
+.status-badge.delivered { background:linear-gradient(135deg, #b3e5fc 0%, #81d4fa 100%); color:#0277bd; }
+
+/* Order detail card - modern, clean design */
+.order-detail-card { background:linear-gradient(135deg, #ffffff 0%, #fdfcf7 100%); border:1px solid rgba(46, 93, 71, 0.12); border-radius:14px; padding:24px; box-shadow: 0 12px 32px rgba(0,0,0,0.08); }
+.order-detail-card .detail-header { border-bottom:2px solid rgba(46, 93, 71, 0.08); padding-bottom:20px; margin-bottom:24px; }
+.order-detail-card .detail-header h3 { font-weight:900; color:#1e3852; margin:0 0 12px 0; font-size:20px; text-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+.order-detail-card .detail-header .order-id { color:#2E5D47; font-size:20px; }
+.order-detail-card .detail-header .detail-meta { display:flex; gap:16px; flex-wrap:wrap; align-items:center; color:#4b6a5b; font-size:12px; font-weight:600; }
+.order-detail-card .detail-header .detail-meta strong { color:#1e3852; }
+
+.order-detail-card .detail-body { margin-bottom:24px; }
+.order-detail-card .detail-body h4 { font-weight:800; color:#1e3852; margin:0 0 12px 0; font-size:16px; }
+.order-detail-card .detail-items { background:linear-gradient(135deg, #fafbfc 0%, #f5f7fa 100%); padding:12px; border-radius:10px; border:1px solid rgba(46, 93, 71, 0.08); box-shadow: inset 0 2px 4px rgba(0,0,0,0.02); }
+.order-detail-card .detail-item { display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid rgba(46, 93, 71, 0.08); }
+.order-detail-card .detail-item:last-child { border-bottom:none; }
+.order-detail-card .detail-item .item-name { font-weight:600; color:#2e3852; }
+.order-detail-card .detail-item .item-price { font-weight:800; color:#2E5D47; font-size:14px; }
+
+.order-detail-card .detail-footer { border-top:2px solid rgba(46, 93, 71, 0.08); padding-top:16px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; }
+.order-detail-card .detail-total { display:flex; align-items:center; gap:10px; font-size:18px; font-weight:800; color:#1e3852; }
+.order-detail-card .detail-total strong { color:#2E5D47; font-size:20px; }
+.order-detail-card .detail-actions { display:flex; gap:10px; }
+.order-detail-card .btn.secondary { background:#fff; border:2px solid #2E5D47; color:#2E5D47; padding:12px 24px; border-radius:12px; font-weight:800; cursor:pointer; transition:all 0.3s ease; box-shadow: 0 3px 8px rgba(0,0,0,0.08); }
+.order-detail-card .btn.secondary:hover { background:#f5faf7; transform: translateY(-2px); box-shadow: 0 5px 16px rgba(0,0,0,0.12); }
+.order-detail-card .btn.primary { background: linear-gradient(135deg, #2E5D47 0%, #3a6d54 100%); color:#fff; padding:12px 24px; border-radius:12px; font-weight:800; cursor:pointer; transition:all 0.3s ease; box-shadow: 0 4px 12px rgba(46, 93, 71, 0.25); }
+.order-detail-card .btn.primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(46, 93, 71, 0.35); }
+
+.modal { position: fixed; inset:0; display:none; align-items:center; justify-content:center; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index:2000; }
+.modal[aria-hidden="false"] { display:flex; }
+.modal-content { background:linear-gradient(135deg, #ffffff 0%, #fdfcf7 100%); padding:32px; border-radius:20px; width: 450px; box-shadow:0 16px 48px rgba(0,0,0,0.2); border: 1px solid rgba(46, 93, 71, 0.08); }
+
+/* Toast notification styles */
+.toast {
+  position: fixed;
+  top: 100px;
+  right: 20px;
+  padding: 16px 24px;
+  border-radius: 12px;
+  color: white;
+  z-index: 999999 !important;
+  max-width: 320px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+  animation: slideIn 0.3s ease-out;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.toast strong {
+  display: block;
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 2px;
+}
+
+.toast span {
+  font-size: 13px;
+  opacity: 0.95;
+}
+
+.toast-success { background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%); }
+.toast-error { background: linear-gradient(135deg, #d9534f 0%, #c9302c 100%); }
+.toast-info { background: linear-gradient(135deg, #5bc0de 0%, #46b8da 100%); }
+.toast-warning { background: linear-gradient(135deg, #f0ad4e 0%, #ec971f 100%); }
+
+@keyframes slideIn {
+  from {
+    transform: translateX(400px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@media (max-width: 980px) {
+  .profile-card { flex-direction: column; }
+  .profile-sidebar { width: 100%; min-height: auto; border-right: 1px solid #e6ede8; }
+  .right-col { width: 100%; padding:24px; }
+}

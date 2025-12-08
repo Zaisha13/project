@@ -1,0 +1,255 @@
+/* PURPOSE: Authentication page styles for cashier login — login forms and styling
+  used during cashier authentication flows. */
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background-color: #fffde9;
+  font-family: "Century Gothic", sans-serif;
+  overflow-x: hidden;
+}
+
+/* MAIN */
+main {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 80px);
+  padding: 20px;
+}
+
+.login-container, .register-container {
+  background-color: #fffef4;
+  border-radius: 15px;
+  padding: 30px 40px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  width: 100%;
+  max-width: 380px;
+  text-align: center;
+}
+
+.login-container h2, .register-container h2 {
+  color: #1E3A8A;
+  font-family: "Century Gothic", sans-serif;
+  letter-spacing: 1px;
+  margin-bottom: 20px;
+}
+
+/* Cashier Branding */
+.cashier-branding {
+  background: linear-gradient(135deg, #1E3A8A, #3B82F6);
+  color: white;
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+
+.cashier-branding h2 {
+  color: white;
+  margin: 0;
+  font-size: 20px;
+}
+
+.cashier-branding p {
+  margin: 5px 0 0 0;
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+/* FORM */
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  gap: 8px; /* tighten spacing between labels and inputs */
+}
+
+.auth-form label {
+  margin-top: 10px;
+  color: #3a3a3a;
+  font-weight: bold;
+  font-size: 14px;
+  font-family: "Century Gothic", sans-serif;
+}
+
+.auth-form input {
+  margin-top: 2px;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #c9e4b6;
+  background-color: #f5fff3;
+  font-size: 12px;
+  font-family: "Century Gothic", sans-serif;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.auth-form input:focus {
+  outline: none;
+  border-color: #3B82F6;
+  box-shadow: 0 0 4px rgba(59, 130, 246, 0.3);
+}
+
+/* Password input wrapper for show/hide functionality */
+.password-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-wrapper input {
+  padding-right: 40px;
+  width: 100%;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 5px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  color: #888;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 5px 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s ease;
+  z-index: 1;
+}
+
+.password-toggle:hover {
+  color: #3B82F6;
+}
+
+.password-toggle:focus {
+  outline: none;
+}
+
+.password-toggle i {
+  pointer-events: none;
+}
+
+/* BUTTONS */
+.btn-main {
+  margin-top: 10px;
+  background: linear-gradient(135deg, #1E3A8A, #3B82F6);
+  color: #fff;
+  border: none;
+  padding: 12px;
+  border-radius: 10px;
+  font-size: 16px;
+  font-family: "Century Gothic", sans-serif;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-main:hover {
+  background: linear-gradient(135deg, #244aa5, #356fe8);
+  box-shadow: 0 2px 8px rgba(30, 58, 138, 0.25);
+}
+
+.btn-main i {
+  margin-right: 0;
+}
+
+/* Forgot Password Link */
+.forgot-password {
+  text-align: center;
+  margin-top: 10px;
+}
+
+.forgot-password a {
+  color: #3B82F6;
+  text-decoration: none;
+  font-size: 14px;
+  transition: color 0.2s ease;
+}
+
+.forgot-password a:hover {
+  text-decoration: underline;
+  color: #1E3A8A;
+}
+
+.login-divider, .register-divider {
+  text-align: center;
+  color: #777;
+  margin: 10px 0;
+}
+
+.btn-google {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  color: #444;
+  padding: 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 14px;
+  font-family: "Century Gothic", sans-serif;
+  transition: background 0.3s ease;
+  width: 100%;
+}
+
+.btn-google img {
+  width: 20px;
+  height: 20px;
+}
+
+.btn-google:hover {
+  background-color: #ebebeb;
+}
+
+.auth-switch {
+  text-align: center;
+  font-size: 14px;
+  margin-top: 15px;
+}
+
+.auth-switch a {
+  color: #3B82F6;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.auth-switch a:hover {
+  text-decoration: underline;
+}
+
+/* Shake animation for login errors */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+  20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+.animate-shake {
+  animation: shake 0.5s ease-in-out;
+}
+
+/* RESPONSIVE */
+@media (max-width: 480px) {
+  .login-container, .register-container {
+    width: 90%;
+    padding: 20px;
+    max-width: none;
+  }
+
+  main {
+    min-height: calc(100vh - 100px);
+    padding: 15px;
+  }
+}
+

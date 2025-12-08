@@ -1,0 +1,859 @@
+/* PURPOSE: Load the primary typeface used across the cashier dashboard. */
+@font-face {
+  font-family: 'Century Gothic Custom';
+  src: local('Century Gothic'), local('CenturyGothic'),
+       url('https://fonts.cdnfonts.com/s/16473/CenturyGothic.woff') format('woff');
+  font-weight: 300 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Lobster';
+  src: url('../../../assets/font/Lobster 1.4.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* PURPOSE: Design tokens — color variables, radii, shadows and font stacks used across the stylesheet. */
+:root {
+  --font-primary: 'Century Gothic Custom', 'Century Gothic', Arial, Helvetica, sans-serif;
+  --font-script: 'Pacifico', cursive;
+  --font-brand: 'Lobster', cursive;
+  --green-600: #2E8B57;         
+  --green-700: #246b46;         
+  --gold-400: #FFD700;          
+  --bg-light: #F5F1E6;          
+  --card-white: #ffffff;
+  --muted: #6b6b6b;
+  --glass: rgba(255,255,255,0.7);
+  --shadow: 0 6px 18px rgba(0,0,0,0.08);
+  --radius-lg: 14px;
+  --radius-sm: 8px;
+  /* Cashier header colors from login page */
+  --header-blue: #1E3A8A;
+  --header-blue-light: #3B82F6;
+}
+
+
+/* PURPOSE: Base resets and global rules (box-sizing, body background, smooth font rendering, link/button defaults). */
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+html,body { height: 100%; margin: 0; overflow-x: hidden; font-family: var(--font-primary); color: var(--green-600); background-color: var(--bg-light); -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; }
+a { color: inherit; text-decoration: none; }
+button { font-family: var(--font-primary); }
+
+/* PURPOSE: App-level layout container holding sidebar and main content. */
+.app {
+  display: flex;
+  min-height: 100vh;
+  gap: 24px;
+}
+
+/* PURPOSE: Sidebar — styles for the left navigation panel, including positioning, spacing and visual effects. */
+.sidebar {
+  width: 260px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.03));
+  border-right: 1px solid rgba(0,0,0,0.05);
+  padding: 22px;
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 12px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.03);
+  z-index: 50;
+  backdrop-filter: blur(6px);
+}
+
+.sidebar .brand {
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin-bottom: 6px;
+}
+.sidebar .brand img { width:50px; height:50px; object-fit:contain; border-radius:8px; }
+.sidebar .brand h1 {
+  margin:0;
+  font-size:16px;
+  line-height:1.1;
+  font-weight:700;
+  color: var(--header-blue);
+  font-family: var(--font-brand);
+}
+.sidebar .brand p {
+  margin:0;
+  font-size:12px;
+  color:var(--muted);
+}
+
+.nav {
+  margin-top: 18px;
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+
+.nav a {
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:10px 12px;
+  border-radius:10px;
+  color: #214e39;
+  font-weight:600;
+  transition: all 0.18s ease;
+}
+.nav a i {
+  width:24px;
+  text-align:center;
+  font-size:16px;
+  color: var(--green-700);
+}
+.nav a span {
+  flex:1;
+  font-size:14px;
+}
+
+.nav a:hover {
+  background: linear-gradient(90deg, rgba(255,215,0,0.08), rgba(46,139,87,0.03));
+  transform: translateX(4px);
+  box-shadow: var(--shadow);
+}
+
+.nav a.active {
+  background: linear-gradient(90deg, rgba(46,139,87,0.14), rgba(255,215,0,0.02));
+  border-left: 4px solid var(--gold-400);
+  padding-left: 8px;
+  color: var(--green-700);
+}
+
+/* PURPOSE: Main content area — spacing and layout for the right-hand dashboard content that sits next to the sidebar. */
+.main {
+  margin-left: 300px; /* account for sidebar + spacing */
+  padding: 28px;
+  padding-bottom: 80px;
+  flex:1;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch; /* allow children to expand to available width */
+  min-width: 0; /* enable proper shrinking of flex children */
+  overflow-x: hidden; /* Prevent horizontal scroll on main container */
+  max-width: calc(100vw - 300px); /* Ensure main doesn't exceed viewport */
+}
+
+/* Admin embed: make dashboard use full available width; hide sidebar */
+.admin-embed .sidebar { display: none !important; }
+.admin-embed .main {
+  margin-left: 0 !important;
+  max-width: 100vw !important;
+  padding-left: 18px;
+  padding-right: 18px;
+}
+
+header.topbar {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:20px;
+  margin-bottom: 18px;
+  background: transparent !important; /* ensure no green header background */
+  border: 0 !important;
+  box-shadow: none !important;
+}
+.topbar .page-title {
+  display:flex;
+  flex-direction:column;
+  background: transparent !important;
+}
+.topbar .page-title h2 {
+  margin:0;
+  font-size:20px;
+  color: var(--green-700);
+}
+.topbar .page-title p { margin:0; color:var(--muted); font-size:13px; }
+
+/* PURPOSE: Grid and card components — responsive 12-column grid and reusable card styles for dashboard panels. */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 18px;
+  width: 100%;
+  max-width: none; /* ensure grid can use the full main width */
+}
+.card {
+  background: var(--card-white);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+  padding: 18px;
+  border: 1px solid rgba(0,0,0,0.03);
+  min-width: 0; /* allow content like tables to shrink correctly inside grid cells */
+}
+.col-4 { grid-column: span 4; }
+.col-6 { grid-column: span 6; }
+.col-8 { grid-column: span 8; }
+.col-10 { grid-column: span 10; }
+.col-12 { grid-column: span 12; }
+
+.card h3 { margin:0 0 10px 0; color: var(--green-700); font-size:16px; font-weight:700; }
+.muted { color:var(--muted); font-size:13px; }
+
+/* PURPOSE: Table styles — layout, cell padding and borders for data tables (orders, reports, etc.). */
+/* Tables: use full width and allow automatic column sizing; enable wrapping for long content */
+table { width:100%; border-collapse:collapse; font-size:13px; table-layout: auto; }
+/* Add full cell borders for clearer column/row lines */
+th, td { white-space: normal; word-break: break-word; padding:12px 10px; border:1px solid #f0f0f0; text-align:left; color:#2a2a2a; }
+th { background:transparent; color:var(--muted); font-weight:700; font-size:12px; text-transform:uppercase; padding:14px 10px; }
+
+/* Order Management Container - scrollable wrapper */
+#orders {
+  overflow: visible; /* Card itself doesn't scroll */
+}
+#orders .table-wrapper {
+  overflow-x: auto;
+  overflow-y: visible;
+  margin-top: 14px;
+  width: 100%;
+  -webkit-overflow-scrolling: touch;
+}
+#orders .table-wrapper::-webkit-scrollbar {
+  height: 8px;
+}
+#orders .table-wrapper::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+#orders .table-wrapper::-webkit-scrollbar-thumb {
+  background: var(--green-600);
+  border-radius: 4px;
+}
+#orders .table-wrapper::-webkit-scrollbar-thumb:hover {
+  background: var(--green-700);
+}
+
+/* Order Management Table Specific Styles - wider columns */
+#orders table { 
+  min-width: 1320px; /* Minimum width to fit all columns comfortably */
+  width: 100%;
+}
+#orders table th:nth-child(1) { min-width: 120px; width: 120px; } /* Order ID */
+#orders table th:nth-child(2) { min-width: 140px; width: 140px; } /* Customer Type */
+#orders table th:nth-child(3) { min-width: 260px; width: 260px; } /* Customer (wider) */
+#orders table th:nth-child(4) { min-width: 280px; width: auto; } /* Drink(s) - flexible */
+#orders table th:nth-child(5) { min-width: 120px; width: 120px; } /* Size */
+#orders table th:nth-child(6) { min-width: 180px; width: 180px; } /* Special Instruction */
+#orders table th:nth-child(7) { min-width: 100px; width: 100px; } /* Status */
+#orders table th:nth-child(8) { min-width: 160px; width: 160px; } /* Actions */
+#orders table th:nth-child(9) { min-width: 100px; width: 100px; } /* Total */
+
+/* Customer Type badge styling */
+#orders table td:nth-child(2) {
+  white-space: nowrap;
+  word-break: normal;
+}
+
+#orders table td:nth-child(2) span {
+  display: inline-block;
+  white-space: nowrap;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: bold;
+  letter-spacing: 0.3px;
+}
+
+/* Status badge styling - prevent wrapping */
+#orders table td:nth-child(7) {
+  white-space: nowrap;
+  word-break: normal;
+}
+
+#orders table td:nth-child(7) span {
+  display: inline-block;
+  white-space: nowrap;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: bold;
+  letter-spacing: 0.3px;
+}
+
+/* Actions column styling */
+#orders table td:nth-child(8) {
+  white-space: nowrap;
+}
+
+#orders table td:nth-child(8) .btn {
+  flex-shrink: 0;
+}
+
+/* Improve spacing in table cells */
+#orders table td {
+  vertical-align: middle;
+}
+
+#orders table td:nth-child(4),
+#orders table td:nth-child(6) {
+  word-break: break-word;
+  line-height: 1.5;
+}
+
+/* Customer Handling Container - scrollable wrapper */
+#customers .table-wrapper {
+  overflow-x: auto;
+  overflow-y: visible;
+  margin-top: 14px;
+  width: 100%;
+  -webkit-overflow-scrolling: touch;
+}
+#customers .table-wrapper::-webkit-scrollbar {
+  height: 8px;
+}
+#customers .table-wrapper::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+#customers .table-wrapper::-webkit-scrollbar-thumb {
+  background: var(--green-600);
+  border-radius: 4px;
+}
+#customers .table-wrapper::-webkit-scrollbar-thumb:hover {
+  background: var(--green-700);
+}
+
+/* Customer Handling Table Specific Styles */
+#customers table { 
+  min-width: 950px;
+  width: 100%;
+}
+#customers table th:nth-child(1) { min-width: 120px; width: 120px; } /* Order ID */
+#customers table th:nth-child(2) { min-width: 180px; width: 180px; } /* Name */
+#customers table th:nth-child(3) { min-width: 200px; width: 200px; } /* Email */
+#customers table th:nth-child(4) { min-width: 150px; width: 150px; } /* Phone */
+#customers table th:nth-child(5) { min-width: 140px; width: 140px; } /* Customer Type */
+
+/* PURPOSE: Button system — primary, outline and small modifiers used for actions across the UI. */
+.btn {
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  padding:10px 18px;
+  border-radius:999px;
+  border: none;
+  cursor:pointer;
+  font-weight:700;
+  transition: transform .15s ease, box-shadow .15s ease;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+  font-family: var(--font-primary);
+  letter-spacing: .4px;
+}
+
+.btn--primary {
+  background: linear-gradient(180deg, var(--green-600), var(--green-700));
+  color: #fff;
+  font-size:14px;
+}
+.btn--primary:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(46,139,87,0.12); }
+
+.btn--outline {
+  background: transparent;
+  border: 1px solid rgba(46,139,87,0.12);
+  color: var(--green-700);
+  padding:9px 14px;
+  font-weight:700;
+}
+
+.small { padding:6px 10px; font-size:13px; border-radius:10px; }
+
+/* PURPOSE: Small control elements such as search inputs and inline action controls. */
+.controls {
+  display:flex;
+  gap:12px;
+  align-items:center;
+}
+.search-input {
+  padding:10px 12px;
+  border-radius:10px;
+  border:1px solid rgba(0,0,0,0.06);
+  min-width:240px;
+  background:var(--card-white);
+}
+
+/* PURPOSE: Responsive breakpoints — adjust sidebar/grid/column spans for narrower viewports. */
+@media (max-width: 980px) {
+  .sidebar { width: 220px; }
+  .main { margin-left: 260px; padding:18px; }
+  .col-4 { grid-column: span 6; }
+  .col-6 { grid-column: span 6; }
+}
+@media (max-width: 780px) {
+  .sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: auto;
+    width: 100%;
+    height: auto;
+    display: none; 
+  }
+  .main { margin-left: 0; padding: 14px; }
+  .grid { grid-template-columns: repeat(6, 1fr); }
+  .col-4 { grid-column: span 6; }
+  .col-6 { grid-column: span 6; }
+  .col-8 { grid-column: span 6; }
+  .col-12 { grid-column: span 6; }
+}
+
+/* PURPOSE: Mobile-friendly stacked-row representation for the orders table — converts rows to cards and shows labels via data-label attributes added by JS. */
+@media (max-width: 640px) {
+  /* Make the table behave like a list of cards */
+  #orders table, #orders thead, #orders tbody, #orders th, #orders td, #orders tr { display: block; }
+  /* Hide the header row since labels will be shown via data-label */
+  #orders thead { display: none; }
+
+  /* Row card styling */
+  #orders tbody tr { margin: 0 0 12px 0; padding: 10px; border-radius: 10px; background: #fff; box-shadow: var(--shadow); border:1px solid rgba(0,0,0,0.04); }
+
+  /* Each cell becomes a horizontal pair: label (before) and value */
+  #orders tbody td { display: flex; justify-content: space-between; align-items: center; padding: 10px 8px; border: none; border-bottom: 1px dashed #eee; }
+  #orders tbody td:last-child { border-bottom: none; }
+
+  /* Show label via pseudo-element using the data-label attribute set by JS */
+  /* Use a slightly smaller label column (30%) and larger value column (70%) for better readability */
+  #orders tbody td::before { content: attr(data-label) ":"; display: inline-block; color: var(--muted); font-weight: 700; margin-right: 12px; width: 30%; max-width: 30%; }
+  #orders tbody td > * { width: 70%; max-width: 70%; text-align: right; }
+
+  /* Make totals remain compact */
+  #orders tbody td[data-label="Total"] { white-space: nowrap; }
+}
+
+/* PURPOSE: Helper utilities — small reusable utility classes used throughout the templates. */
+.flex { display:flex; gap:12px; align-items:center; }
+.right { margin-left:auto; }
+.badge { background: var(--gold-400); color: #333; padding:6px 10px; border-radius:999px; font-weight:800; font-size:12px; }
+
+/* PURPOSE: Action buttons used inside table rows (approve/cancel etc.). */
+.action-btn {
+  padding:8px 12px;
+  border-radius: 999px;
+  border: none;
+  cursor:pointer;
+  font-weight:700;
+  font-size:13px;
+}
+.action-approve { background: var(--gold-400); color:#222; }
+.action-cancel { background: transparent; color: var(--green-700); border:1px solid rgba(46,139,87,0.08); }
+
+/* Logout button */
+.logout-btn {
+  background: #ef4444 !important; /* match admin design */
+  color: #fff !important;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.logout-btn:hover {
+  background: #dc2626 !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.35);
+}
+/* Ensure sidebar logout is consistent even if generic .btn styles apply */
+.sidebar .logout-btn { background:#ef4444 !important; color:#fff !important; }
+.sidebar .logout-btn:hover { background:#dc2626 !important; }
+
+/* PURPOSE: Detailed Report Modal Styles */
+.report-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+}
+
+.report-modal-content {
+  background: var(--card-white);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+  width: 90%;
+  max-width: 800px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.report-modal-header {
+  background: linear-gradient(135deg, var(--green-600), var(--green-700));
+  color: white;
+  padding: 20px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 3px solid var(--gold-400);
+}
+
+.report-modal-header h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.report-modal-header h2 i {
+  font-size: 22px;
+}
+
+.report-modal-close {
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 32px;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.3s;
+}
+
+.report-modal-close:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: rotate(90deg);
+}
+
+.report-modal-body {
+  padding: 24px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.report-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.report-summary-card {
+  background: linear-gradient(135deg, var(--bg-light), #ffffff);
+  padding: 16px;
+  border-radius: var(--radius-sm);
+  border-left: 4px solid var(--green-600);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.report-summary-card h4 {
+  margin: 0 0 8px 0;
+  color: var(--muted);
+  font-size: 12px;
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.report-summary-card .value {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--green-700);
+  margin: 0;
+}
+
+.report-summary-card.approved .value {
+  color: #3b82f6;
+}
+
+.report-summary-card.completed .value {
+  color: #10b981;
+}
+
+.report-summary-card.pending .value {
+  color: #f59e0b;
+}
+
+.report-summary-card.cancelled .value {
+  color: #ef4444;
+}
+
+.report-section {
+  margin-bottom: 24px;
+}
+
+.report-section h3 {
+  color: var(--green-700);
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0 0 12px 0;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--bg-light);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.report-section h3 i {
+  font-size: 18px;
+}
+
+.report-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 12px;
+}
+
+.report-table th {
+  background: var(--bg-light);
+  color: var(--green-700);
+  padding: 12px;
+  text-align: left;
+  font-weight: 700;
+  font-size: 12px;
+  text-transform: uppercase;
+  border-bottom: 2px solid var(--green-600);
+}
+
+.report-table td {
+  padding: 12px;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 13px;
+  color: #2a2a2a;
+}
+
+.report-table tr:hover {
+  background: var(--bg-light);
+}
+
+.report-table tr:last-child td {
+  border-bottom: none;
+}
+
+.report-total {
+  margin-top: 20px;
+  padding: 16px;
+  background: linear-gradient(135deg, var(--green-600), var(--green-700));
+  color: white;
+  border-radius: var(--radius-sm);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.report-total-label {
+  font-size: 16px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.report-total-amount {
+  font-size: 28px;
+  font-weight: 800;
+}
+
+.report-modal-footer {
+  padding: 16px 24px;
+  border-top: 1px solid #f0f0f0;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  background: var(--bg-light);
+}
+
+@media (max-width: 640px) {
+  .report-modal-content {
+    width: 95%;
+    max-height: 95vh;
+  }
+  
+  .report-summary {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .report-modal-header h2 {
+    font-size: 16px;
+  }
+}
+
+/* PURPOSE: Status dropdown for order management */
+.status-dropdown {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  padding: 6px 36px 6px 8px;
+  border-radius: 6px;
+  border: 1px solid rgba(0,0,0,0.2);
+  font-size: 12px;
+  cursor: pointer;
+  background: white;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23246b46' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  min-width: 140px;
+  font-family: var(--font-primary);
+  color: var(--green-700);
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.status-dropdown:hover {
+  border-color: var(--green-700);
+  box-shadow: 0 2px 6px rgba(46, 107, 70, 0.15);
+}
+
+.status-dropdown:focus {
+  outline: none;
+  border-color: var(--green-700);
+  box-shadow: 0 0 0 3px rgba(46, 107, 70, 0.1);
+}
+
+.status-dropdown option {
+  padding: 8px;
+  background: white;
+  color: var(--green-700);
+}
+
+/* Override default option hover/selected colors specifically for status dropdown */
+.status-dropdown option:hover {
+  background-color: #eef6f1; /* soft green hover */
+  color: var(--green-700);
+}
+
+.status-dropdown option:checked,
+.status-dropdown option:focus {
+  background-color: #dff0e4; /* light green selected */
+  color: var(--green-700); /* keep dark text for readability */
+}
+
+/* PURPOSE: Custom dropdown styling for inventory status selector */
+select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-color: #ffffff;
+  color: var(--green-700);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23246b46' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 36px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+select:hover {
+  background-color: var(--bg-light);
+  border-color: var(--green-600);
+  box-shadow: 0 2px 8px rgba(46, 139, 87, 0.1);
+}
+
+select:focus {
+  outline: none;
+  border-color: var(--green-600);
+  box-shadow: 0 0 0 3px rgba(46, 139, 87, 0.1);
+  background-color: white;
+}
+
+select option {
+  padding: 10px;
+  background-color: white;
+  color: var(--green-700);
+  font-weight: 500;
+}
+
+select option:hover {
+  background-color: #eef6f1; /* soft green hover */
+  color: var(--green-700);
+}
+
+select option:checked,
+select option:focus {
+  background-color: #dff0e4; /* light green selected */
+  color: var(--green-700); /* keep readable text */
+  font-weight: 700;
+}
+
+/* Styled confirm modal */
+.confirm-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1100;
+  backdrop-filter: blur(3px);
+}
+.confirm-modal {
+  width: 92%;
+  max-width: 520px;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 16px 48px rgba(0,0,0,0.2);
+  padding: 22px;
+  border: 1px solid rgba(0,0,0,0.06);
+  text-align: left;
+}
+.confirm-modal h3 {
+  margin: 0 0 8px 0;
+  color: var(--green-700);
+  font-size: 20px;
+}
+.confirm-modal p {
+  margin: 0 0 16px 0;
+  color: var(--muted);
+  line-height: 1.5;
+}
+.confirm-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: rgba(239,68,68,0.12);
+  color: #b91c1c;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  margin-bottom: 10px;
+}
+.confirm-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+/* Toast banner for feedback */
+.toast-banner {
+  position: fixed;
+  top: 18px;
+  right: 18px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  color: #fff;
+  opacity: 0;
+  transform: translateY(-8px);
+  transition: all .25s ease;
+  z-index: 1200;
+  box-shadow: var(--shadow);
+  font-weight: 700;
+}
+.toast-banner.visible { opacity: 1; transform: translateY(0); }
+.toast-banner.success { background: #22c55e; }
+.toast-banner.error { background: #ef4444; }
+.toast-banner.info { background: #3b82f6; }

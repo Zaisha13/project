@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Login | Jessie Cane</title>
+  <link rel="stylesheet" href="../../assets/css/shared.css">
+  <link rel="stylesheet" href="css/auth.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    html, body { height: 100%; overflow: hidden; }
+    body {
+      background-color: #fffde9;
+      margin: 0;
+      padding: 0;
+    }
+    .admin-branding {
+      background: linear-gradient(135deg, #8B4513, #A0522D);
+      color: white;
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+    }
+    .admin-branding h2 {
+      color: white;
+      margin: 0;
+    }
+    .admin-branding p {
+      margin: 5px 0 0 0;
+      font-size: 14px;
+      opacity: 0.9;
+    }
+    .forgot-password {
+      text-align: center;
+      margin-top: 10px;
+    }
+    .forgot-password a {
+      color: #A0522D;
+      text-decoration: none;
+      font-size: 14px;
+    }
+    .forgot-password a:hover {
+      text-decoration: underline;
+    }
+    /* Override header colors for admin */
+    :root {
+      --header-bg: #8B4513;
+      --header-text: #FAF9F4;
+      --header-accent: #E5C100;
+    }
+    header, .navbar {
+      background-color: var(--header-bg) !important;
+      color: var(--header-text) !important;
+    }
+    .nav-btn, .navbar a { color: var(--header-text) !important; }
+    .nav-btn::after, .navbar a::after { background-color: var(--header-accent) !important; }
+
+    /* Professional display font for titles */
+    .admin-branding h2 {
+      font-family: "Plus Jakarta Sans", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      font-weight: 800;
+      letter-spacing: 0.4px;
+    }
+    .left-header span {
+      font-family: "Plus Jakarta Sans", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      font-weight: 700;
+      letter-spacing: 0.2px;
+    }
+
+    /* Branded modal (admin palette) */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.45); display: none; align-items: center; justify-content: center; z-index: 1200; backdrop-filter: blur(3px); }
+    .modal { background: #fffef9; border-radius: 16px; width: min(520px, 92vw); box-shadow: 0 18px 48px rgba(0,0,0,.18); overflow: hidden; border: 1px solid rgba(0,0,0,.06); }
+    .modal__header { background: linear-gradient(135deg, var(--header-bg), var(--header-accent)); color: #fff; padding: 14px 18px; display:flex; align-items:center; justify-content: space-between; }
+    .modal__title { margin: 0; font-weight: 800; letter-spacing: .3px; }
+    .modal__close { background: transparent; border: 0; color: #fff; font-size: 22px; cursor: pointer; line-height: 1; }
+    .modal__body { padding: 18px; color: #1f2937; font-size: 14px; }
+    .modal__actions { padding: 0 18px 18px 18px; display:flex; justify-content:flex-end; gap:10px; }
+    .btn-modal { border: 0; border-radius: 10px; padding: 10px 16px; font-weight: 700; cursor:pointer; }
+    .btn-modal--primary { background: linear-gradient(135deg, var(--header-bg), var(--header-accent)); color:#fff; }
+    .btn-modal--ghost { background: #fff; color: var(--header-bg); border: 1px solid rgba(0,0,0,.1); }
+  </style>
+</head>
+<body>
+  <!-- PURPOSE: Admin login page — authenticate admin users -->
+  <!-- HEADER -->
+  <header>
+    <div class="left-header">
+      <img src="../../assets/images/logo.png" alt="Jessie Cane Logo" onerror="this.style.display='none'">
+      <span style="font-size: 18px; font-weight: bold;">Admin Portal</span>
+    </div>
+    <div class="right-header">
+      <a href="../index.php" class="nav-btn">Back to Portal</a>
+      <a href="login_admin.html" class="nav-btn active">Login</a>
+    </div>
+  </header>
+
+  <main style="display: flex; justify-content: center; align-items: center; height: calc(100vh - 80px); padding: 20px;">
+    <div class="login-container">
+      <div class="admin-branding">
+        <h2><i class="fas fa-user-shield"></i> ADMIN LOGIN</h2>
+        <p>Administrator access only</p>
+      </div>
+      <form class="auth-form" id="adminLoginForm">
+        <label for="email">Email</label>
+        <input type="email" id="email" placeholder="Enter your email" required>
+
+        <label for="password">Password</label>
+        <div class="password-wrapper">
+          <input type="password" id="password" placeholder="Enter your password" required>
+          <button type="button" class="password-toggle" id="togglePassword">
+            <i class="fas fa-eye"></i>
+          </button>
+        </div>
+
+        <button type="submit" class="btn-main" id="adminLoginBtn" style="background: linear-gradient(135deg, #8B4513, #A0522D);">
+          <i class="fas fa-sign-in-alt"></i> Log In
+        </button>
+
+        <div class="forgot-password">
+          <a href="#" id="forgotPasswordLink">Forgot Password?</a>
+        </div>
+      </form>
+    </div>
+  </main>
+
+  <!-- Forgot Password Modal -->
+  <div class="modal-overlay" id="forgotModal" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="forgotTitle">
+      <div class="modal__header">
+        <h3 class="modal__title" id="forgotTitle"><i class="fas fa-key"></i> Password Assistance</h3>
+        <button class="modal__close" id="forgotClose" aria-label="Close">&times;</button>
+      </div>
+      <div class="modal__body">
+        Please contact the system administrator to reset your password.
+      </div>
+      <div class="modal__actions">
+        <button class="btn-modal btn-modal--primary" id="forgotOk">OK</button>
+      </div>
+    </div>
+
+  <!-- Login Error Modal -->
+  <div class="modal-overlay" id="errorModal" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="errorTitle">
+      <div class="modal__header">
+        <h3 class="modal__title" id="errorTitle"><i class="fas fa-triangle-exclamation"></i> Login Error</h3>
+        <button class="modal__close" id="errorClose" aria-label="Close">&times;</button>
+      </div>
+      <div class="modal__body" id="errorMessage">Invalid email or password!</div>
+      <div class="modal__actions">
+        <button class="btn-modal btn-modal--primary" id="errorOk">OK</button>
+      </div>
+    </div>
+  </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const form = document.getElementById('adminLoginForm');
+      const forgotLink = document.getElementById('forgotPasswordLink');
+
+      // Login handler
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const email = document.getElementById('email').value.trim();
+        const password = document.getElementById('password').value;
+        
+        // Admin login using stored credentials (fallback to defaults)
+        const stored = JSON.parse(localStorage.getItem('jessie_admin_credentials') || '{"email":"admin@jessiecane.com","password":"admin123"}');
+        if ((email === 'admin' || email === stored.email) && password === stored.password) {
+          localStorage.setItem('isLoggedIn', 'true');
+          localStorage.setItem('currentUser', JSON.stringify({ username: 'admin', email: email, role: 'admin', password: stored.password, name: 'Admin User' }));
+          window.location.href = 'admin.html';
+        } else {
+          openErrorModal('Invalid email or password!');
+          try { form.classList.remove('animate-shake'); void form.offsetWidth; form.classList.add('animate-shake'); } catch(_) {}
+        }
+      });
+
+      // Forgot password handler -> branded modal
+      const forgotModal = document.getElementById('forgotModal');
+      const forgotClose = document.getElementById('forgotClose');
+      const forgotOk = document.getElementById('forgotOk');
+      function openForgot(){ if (forgotModal) { forgotModal.style.display = 'flex'; } }
+      function closeForgot(){ if (forgotModal) { forgotModal.style.display = 'none'; } }
+      forgotLink.addEventListener('click', function(e){ e.preventDefault(); openForgot(); });
+      if (forgotClose) forgotClose.addEventListener('click', closeForgot);
+      if (forgotOk) forgotOk.addEventListener('click', closeForgot);
+      if (forgotModal) forgotModal.addEventListener('click', function(e){ if (e.target === forgotModal) closeForgot(); });
+
+      // Error modal for invalid login
+      const errorModal = document.getElementById('errorModal');
+      const errorClose = document.getElementById('errorClose');
+      const errorOk = document.getElementById('errorOk');
+      const errorMessage = document.getElementById('errorMessage');
+      function openErrorModal(message){ if (errorMessage) errorMessage.textContent = message || 'Something went wrong.'; if (errorModal) errorModal.style.display = 'flex'; }
+      function closeErrorModal(){ if (errorModal) errorModal.style.display = 'none'; }
+      if (errorClose) errorClose.addEventListener('click', closeErrorModal);
+      if (errorOk) errorOk.addEventListener('click', closeErrorModal);
+      if (errorModal) errorModal.addEventListener('click', function(e){ if (e.target === errorModal) closeErrorModal(); });
+      
+      // Password toggle functionality
+      const togglePassword = document.getElementById('togglePassword');
+      const passwordInput = document.getElementById('password');
+      
+      if (togglePassword && passwordInput) {
+        togglePassword.addEventListener('click', function() {
+          const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+          passwordInput.setAttribute('type', type);
+          
+          // Toggle icon
+          const icon = togglePassword.querySelector('i');
+          if (type === 'password') {
+            icon.classList.remove('fa-eye-slash');
+            icon.classList.add('fa-eye');
+          } else {
+            icon.classList.remove('fa-eye');
+            icon.classList.add('fa-eye-slash');
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>

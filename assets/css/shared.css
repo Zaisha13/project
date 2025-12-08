@@ -1,0 +1,214 @@
+/* PURPOSE: Shared styles across all portals - header, common UI elements */
+
+/* Color Tokens */
+:root {
+  --primary-green: #2E5D47;
+  --primary-green-dark: #1a4a2f;
+  --secondary-green: #146B33;
+  --cream-bg: #FAF9F4;
+  --gold-accent: #FFD966;
+  --yellow-accent: #E5C100;
+  --text-dark: #1e3852;
+  --text-medium: #234736;
+  /* nav light palette left in case needed by pages, but header uses original design */
+  --nav-bg: #2E5D47;
+  --nav-text: #FAF9F4;
+  --nav-hover: #265742;
+}
+
+/* Header Styles */
+header, .navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 40px;
+  background-color: var(--primary-green);
+  color: #FAF9F4;
+}
+
+header {
+  position: sticky;
+  top: 0;
+  z-index: 1100;
+  transition: box-shadow 0.18s ease, backdrop-filter 0.18s ease;
+}
+
+header.scrolled {
+  box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+}
+
+.left-header, .logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.left-header img, .logo img {
+  height: 60px;
+}
+
+.right-header, .navbar ul {
+  display: flex;
+  gap: 30px;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+}
+
+.navbar ul {
+  list-style: none;
+}
+
+.nav-btn, .navbar a {
+  color: #FAF9F4;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 16px;
+  position: relative;
+  padding: 8px 12px;
+  border-radius: 8px;
+}
+
+.nav-btn.disabled {
+  color: rgba(255,255,255,0.78);
+  cursor: default;
+  pointer-events: none;
+  opacity: 0.95;
+}
+
+.nav-btn::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background-color: var(--yellow-accent);
+  transform: translateX(-50%);
+  transition: all 0.25s ease;
+}
+
+.nav-btn:hover::after {
+  width: 60%;
+}
+
+.nav-btn:hover, .navbar a:hover {
+  color: #FCF2C5;
+}
+
+.nav-btn.active, .navbar a.active {
+  color: #FCF2C5;
+}
+
+.logout, .logout-btn {
+  background-color: #FCF2C5;
+  color: var(--primary-green);
+  border-radius: 8px;
+  padding: 8px 15px;
+  font-weight: 700;
+}
+
+/* Keep logout text color the same and subtly darken the button on hover */
+.logout:hover, .logout-btn:hover {
+  background-color: #F3E8A3; /* slightly darker than #FCF2C5 */
+  color: var(--primary-green);
+}
+
+/* Remove underline animation for the logout pill button */
+.logout::after, .logout-btn::after {
+  display: none;
+}
+
+/* Auth Banner */
+.auth-banner {
+  position: fixed;
+  top: 74px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #fff8e1;
+  color: #2d2d2d;
+  border: 1px solid #e5c100;
+  padding: 10px 14px;
+  border-radius: 8px;
+  z-index: 1200;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.12);
+  opacity: 0;
+  transition: opacity 240ms ease, transform 240ms ease;
+  pointer-events: none;
+  max-width: 720px;
+  width: calc(100% - 40px);
+}
+
+.auth-banner.auth-banner--visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.auth-banner small {
+  display: block;
+  margin-top: 6px;
+  color: #6b6b6b;
+  font-size: 12px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  header, .navbar {
+    flex-direction: column;
+    padding: 12px 20px;
+  }
+  .right-header, .navbar ul {
+    margin-top: 8px;
+    gap: 12px;
+  }
+}
+
+/* Global dropdown styling for all selects across the app */
+select, .select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-color: #ffffff;
+  color: var(--text-dark);
+  border: 1px solid rgba(0,0,0,0.2);
+  border-radius: 8px;
+  padding: 8px 36px 8px 10px;
+  font-family: "Century Gothic", Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.2;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23246b46' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+}
+
+select:hover, .select:hover {
+  background-color: #f6fbf8; /* subtle green tint */
+  border-color: var(--primary-green);
+}
+
+select:focus, .select:focus {
+  outline: none;
+  border-color: var(--primary-green);
+  box-shadow: 0 0 0 3px rgba(46, 93, 71, 0.12);
+  background-color: #ffffff;
+}
+
+select option, .select option {
+  background: #ffffff;
+  color: var(--text-dark);
+}
+
+select option:hover, .select option:hover {
+  background-color: #eef6f1; /* soft green hover */
+  color: var(--text-dark);
+}
+
+select option:checked,
+select option:focus,
+.select option:checked,
+.select option:focus {
+  background-color: #dff0e4; /* light green selected */
+  color: var(--text-dark); /* keep readable text */
+}
+

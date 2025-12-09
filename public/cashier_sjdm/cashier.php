@@ -1,3 +1,20 @@
+<?php
+// Start session and check cashier authentication
+session_start();
+
+// Allow admin view parameter (for iframe embedding in admin dashboard)
+$isAdminView = isset($_GET['adminView']) && $_GET['adminView'] == '1';
+
+// Check if cashier is logged in (unless it's an admin view)
+if (!$isAdminView) {
+    if (!isset($_SESSION['cashier_logged_in']) || $_SESSION['cashier_logged_in'] !== true || 
+        !isset($_SESSION['cashier_branch']) || $_SESSION['cashier_branch'] !== 'sjdm') {
+        // Redirect to unified login page
+        header('Location: ../cashier/login_cashier.php');
+        exit;
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -161,25 +178,48 @@
         </div>
 
   <!-- Sales Report card -->
-  <div class="card col-6" id="reports" style="margin-top:6px;padding:14px 16px;">
-          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">
+  <div class="card col-6" id="reports" style="margin-top:6px;padding:20px 22px;">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;flex-wrap:wrap;gap:12px;">
             <div>
-              <h3 style="margin:0 0 4px 0;">Sales Reporting</h3>
+              <h3 style="margin:0 0 4px 0;font-size:18px;color:var(--green-700);font-weight:700;">Sales Reporting</h3>
               <p class="muted" style="margin:0;font-size:12px;">Daily summary reports.</p>
             </div>
-            <button class="btn btn--primary small" onclick="viewDetailedReport()" style="flex-shrink:0;"><i class="fa-solid fa-chart-pie"></i> View Detailed Report</button>
+            <button class="btn btn--primary small" onclick="viewDetailedReport()" style="flex-shrink:0;padding:10px 16px;font-size:13px;"><i class="fa-solid fa-chart-pie"></i> View Detailed Report</button>
           </div>
 
-          <div style="margin-top:10px;">
-            <div style="font-size:32px;font-weight:800;color:var(--green-700);line-height:1.2;margin-bottom:4px;"><span id="total-sales">₱0.00</span></div>
-            <div class="muted" style="font-size:12px;margin-bottom:10px;">Total Sales Today</div>
-            <div style="font-size:12px; color:var(--muted);line-height:1.6;">
-              Orders: <strong id="total-orders">0</strong>
-              &nbsp;•&nbsp; Pending: <strong id="pending-orders">0</strong>
-              &nbsp;•&nbsp; Approved: <strong id="approved-orders">0</strong>
-              &nbsp;•&nbsp; Out for Delivery: <strong id="ofd-orders">0</strong>
-              &nbsp;•&nbsp; Completed: <strong id="completed-orders">0</strong>
-              &nbsp;•&nbsp; Cancelled: <strong id="cancelled-orders">0</strong>
+          <div style="margin-top:16px;">
+            <!-- Sales Amount Section -->
+            <div style="margin-bottom:18px;">
+              <div style="font-size:42px;font-weight:800;color:var(--green-700);line-height:1.1;margin-bottom:6px;"><span id="total-sales">₱0.00</span></div>
+              <div class="muted" style="font-size:12px;font-weight:500;">Total Sales Today</div>
+            </div>
+
+            <!-- Order Status Breakdown Section -->
+            <div style="font-size:13px;color:var(--muted);line-height:1.8;">
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid rgba(0,0,0,0.05);">
+                <span>Orders:</span>
+                <strong style="color:var(--green-700);font-size:14px;" id="total-orders">0</strong>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid rgba(0,0,0,0.05);">
+                <span>Pending:</span>
+                <strong style="color:#f59e0b;font-size:14px;" id="pending-orders">0</strong>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid rgba(0,0,0,0.05);">
+                <span>Approved:</span>
+                <strong style="color:#3b82f6;font-size:14px;" id="approved-orders">0</strong>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid rgba(0,0,0,0.05);">
+                <span>Out for Delivery:</span>
+                <strong style="color:#6366f1;font-size:14px;" id="ofd-orders">0</strong>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid rgba(0,0,0,0.05);">
+                <span>Completed:</span>
+                <strong style="color:#10b981;font-size:14px;" id="completed-orders">0</strong>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;">
+                <span>Cancelled:</span>
+                <strong style="color:#ef4444;font-size:14px;" id="cancelled-orders">0</strong>
+              </div>
             </div>
           </div>
         </div>

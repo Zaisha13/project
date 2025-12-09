@@ -1472,6 +1472,23 @@ function updateModalPrice() {
                                                         order_id: apiResult.data.order_id,
                                                         amount: finalTotal
                                                     });
+                                                    
+                                                    // Clear cart after QR code is generated
+                                                    cart = [];
+                                                    updateCartUI();
+                                                    
+                                                    // Clear any saved cart from localStorage for current user
+                                                    try {
+                                                        const currentUser = JSON.parse(sessionStorage.getItem('currentUser') || localStorage.getItem('currentUser') || '{}');
+                                                        const userKey = encodeURIComponent(((currentUser && (currentUser.email || currentUser.username)) || 'guest').toLowerCase());
+                                                        const savedCartKey = `saved_cart_${userKey}`;
+                                                        localStorage.removeItem(savedCartKey);
+                                                        // Also clear guest pending checkout if exists
+                                                        localStorage.removeItem('guest_pending_checkout');
+                                                    } catch (e) {
+                                                        console.warn('Failed to clear saved cart from localStorage:', e);
+                                                    }
+                                                    
                                                     return; // Exit early, QR modal is shown
                                                 } else {
                                                     console.error('[drinks.js] No checkout URL in payment response:', paymentResult);

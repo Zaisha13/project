@@ -22,12 +22,14 @@ $user_id = $_GET['user_id'] ?? null;
 $order_type = $_GET['order_type'] ?? null;
 
 $query = "SELECT o.*, 
+          MAX(u.google_id) as google_id,
           GROUP_CONCAT(
               CONCAT(oi.product_name, ' (', oi.size, ') x', oi.quantity) 
               SEPARATOR ', '
           ) as items_summary
           FROM orders o
-          LEFT JOIN order_items oi ON o.id = oi.order_id";
+          LEFT JOIN order_items oi ON o.id = oi.order_id
+          LEFT JOIN users u ON o.user_id = u.user_id";
 
 $conditions = [];
 $params = [];

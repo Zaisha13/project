@@ -406,6 +406,16 @@ th { background:transparent; color:var(--muted); font-weight:700; font-size:12px
   .col-6 { grid-column: span 6; }
   .col-8 { grid-column: span 6; }
   .col-12 { grid-column: span 6; }
+  /* Sales reporting responsive layout for mobile */
+  #reports {
+    padding: 16px 18px !important;
+  }
+  #reports h3 {
+    font-size: 16px !important;
+  }
+  #reports > div:last-child > div:first-child > div:first-child {
+    font-size: 36px !important;
+  }
 }
 
 /* PURPOSE: Mobile-friendly stacked-row representation for the orders table — converts rows to cards and shows labels via data-label attributes added by JS. */

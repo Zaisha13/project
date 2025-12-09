@@ -1,3 +1,15 @@
+<?php
+// Start session and check cashier authentication
+session_start();
+
+// Check if cashier is logged in
+if (!isset($_SESSION['cashier_logged_in']) || $_SESSION['cashier_logged_in'] !== true || 
+    !isset($_SESSION['cashier_branch']) || $_SESSION['cashier_branch'] !== 'fairview') {
+    // Redirect to unified login page
+    header('Location: ../cashier/login_cashier.php');
+    exit;
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>

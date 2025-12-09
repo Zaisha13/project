@@ -277,12 +277,22 @@
               <div id="tab-panels" style="padding:12px;">
                 <!-- Consolidated Panel (existing cashier dashboard embed) -->
                 <div id="tab-consolidated" class="sales-tab-panel" style="display:block;">
-              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;gap:12px;">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;gap:12px;flex-wrap:wrap;">
                     <h3 style="margin:0;">Cashier Dashboard (Consolidated)</h3>
-                <button id="refresh-cashier-dashboard-btn" class="btn btn--outline" title="Refresh dashboard" style="display:inline-flex;align-items:center;gap:8px;">
-                  <i class="fa-solid fa-rotate-right"></i>
-                  Refresh
-                </button>
+                    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                      <div style="position:relative;display:flex;align-items:center;">
+                        <i class="fa-solid fa-search" style="position:absolute;left:12px;color:var(--muted);font-size:14px;pointer-events:none;z-index:1;"></i>
+                        <input type="text" id="consolidated-search-input" placeholder="Search by Order ID or Customer..." 
+                          style="padding:10px 38px 10px 38px;border-radius:10px;border:1px solid rgba(0,0,0,0.1);font-size:13px;font-family:var(--font-primary);width:280px;min-width:200px;background:#fff;transition:border-color .2s ease,box-shadow .2s ease;">
+                        <button id="clear-search-btn" type="button" style="position:absolute;right:8px;background:none;border:none;color:var(--muted);cursor:pointer;padding:4px;display:none;z-index:2;font-size:14px;" title="Clear search">
+                          <i class="fa-solid fa-times-circle"></i>
+                        </button>
+                      </div>
+                      <button id="refresh-cashier-dashboard-btn" class="btn btn--outline" title="Refresh dashboard" style="display:inline-flex;align-items:center;gap:8px;">
+                        <i class="fa-solid fa-rotate-right"></i>
+                        Refresh
+                      </button>
+                    </div>
               </div>
               <iframe id="cashier-dashboard-iframe" src="../cashier_fairview/cashier.php?adminView=1" title="Cashier Dashboard (Consolidated)" 
                     style="width:calc(100% + 36px);height:70vh;border:0;border-radius:12px;box-shadow:var(--shadow);margin-left:-18px;"></iframe>

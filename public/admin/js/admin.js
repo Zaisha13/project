@@ -320,6 +320,8 @@ function initializeAdminDashboard() {
                             time: orderTime,
                             orderType: dbOrder.order_type || 'Digital',
                             isGuest: dbOrder.is_guest === 1 || dbOrder.is_guest === true || dbOrder.is_guest === '1',
+                            user_id: dbOrder.user_id || null,
+                            google_id: dbOrder.google_id || null,
                             payment_method: dbOrder.payment_method || 'cash'
                         };
                     });
@@ -593,7 +595,7 @@ function initializeAdminDashboard() {
         localStorage.setItem(MENU_STORAGE_KEY, JSON.stringify(finalForCustomer));
         localStorage.setItem(CUSTOMER_MENU_KEY, JSON.stringify(finalForCustomer));
 
-        showToast('success','Menu updated', `Menu updated and synced to customer dashboard. ${finalForCustomer.length} items available.`);
+        showToast('success','','Menu updated!');
     }
 
     function updateMenuAndSync() {
@@ -1083,8 +1085,8 @@ function initializeAdminDashboard() {
                 { text: 'Delete', type: 'primary', handler: () => {
                     menuItems.splice(index, 1);
                     localStorage.setItem(MENU_STORAGE_KEY, JSON.stringify(menuItems));
+                    hidePopup();
                     closeMenuModal();
-                    showToast('success','Removed', `"${removedName}" removed successfully.`);
                     updateMenuAndSync();
                 } }
             ]
@@ -1130,7 +1132,6 @@ function initializeAdminDashboard() {
                             newItem.id = menuItems[editIndex].id || editingId;
                             menuItems[editIndex] = newItem;
                             localStorage.setItem(MENU_STORAGE_KEY, JSON.stringify(menuItems));
-                            showToast('success','Updated', `"${newItem.name}" updated successfully!`);
 
                             addItemForm.setAttribute('data-editing-id', '-1');
                             closeMenuModal();
@@ -1148,7 +1149,6 @@ function initializeAdminDashboard() {
                 menuItems.push(newItem);
                 localStorage.setItem(MENU_STORAGE_KEY, JSON.stringify(menuItems));
 
-                showToast('success','Added', `"${newItem.name}" added successfully!`);
                 addItemForm.reset();
                 itemImageDataInput.value = '';
                 updateMenuAndSync();
@@ -1308,6 +1308,92 @@ function initializeAdminDashboard() {
             manualRefreshCashierIframe();
         });
     }
+
+    // Consolidated search functionality - filter the iframe table
+    function filterConsolidatedOrders(searchTerm) {
+        const clearSearchBtn = document.getElementById('clear-search-btn');
+        const iframe = document.getElementById('cashier-dashboard-iframe');
+        
+        // Show/hide clear button
+        if (clearSearchBtn) {
+            if (searchTerm && searchTerm.trim() !== '') {
+                clearSearchBtn.style.display = 'block';
+            } else {
+                clearSearchBtn.style.display = 'none';
+            }
+        }
+
+        // Send search term to iframe via postMessage
+        if (iframe && iframe.contentWindow) {
+            try {
+                iframe.contentWindow.postMessage({
+                    type: 'filterOrders',
+                    searchTerm: searchTerm ? searchTerm.trim() : ''
+                }, '*');
+            } catch (e) {
+                console.warn('Could not send message to iframe:', e);
+            }
+        }
+    }
+
+    // Consolidated search functionality - initialize when tab is visible
+    function initializeConsolidatedSearch() {
+        const consolidatedSearchInput = document.getElementById('consolidated-search-input');
+        const clearSearchBtn = document.getElementById('clear-search-btn');
+
+        if (!consolidatedSearchInput) {
+            console.warn('Search input not found');
+            return;
+        }
+
+        // Remove existing event listeners by cloning the element
+        const newSearchInput = consolidatedSearchInput.cloneNode(true);
+        consolidatedSearchInput.parentNode.replaceChild(newSearchInput, consolidatedSearchInput);
+
+        // Add event listener for search input
+        let searchTimeout;
+        newSearchInput.addEventListener('input', function(e) {
+            clearTimeout(searchTimeout);
+            const searchTerm = e.target.value;
+            
+            // Debounce the search to avoid too many API calls (reduced to 100ms for faster response)
+            searchTimeout = setTimeout(() => {
+                filterConsolidatedOrders(searchTerm);
+            }, 100);
+        });
+
+        // Clear search on Escape key
+        newSearchInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                e.target.value = '';
+                const clearBtn = document.getElementById('clear-search-btn');
+                if (clearBtn) clearBtn.style.display = 'none';
+                filterConsolidatedOrders('');
+            }
+        });
+
+        // Also trigger on paste
+        newSearchInput.addEventListener('paste', function(e) {
+            setTimeout(() => {
+                const searchTerm = e.target.value;
+                filterConsolidatedOrders(searchTerm);
+            }, 10);
+        });
+
+        // Clear button functionality
+        if (clearSearchBtn) {
+            // Remove existing listeners
+            const newClearBtn = clearSearchBtn.cloneNode(true);
+            clearSearchBtn.parentNode.replaceChild(newClearBtn, clearSearchBtn);
+            
+            newClearBtn.addEventListener('click', function() {
+                newSearchInput.value = '';
+                newSearchInput.focus();
+                newClearBtn.style.display = 'none';
+                filterConsolidatedOrders('');
+            });
+        }
+    }
     
     // --- SALES REPORT TABS & RENDERING ---
     function setupSalesReportTabs(){
@@ -1322,6 +1408,19 @@ function initializeAdminDashboard() {
                 tabButtons.forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
                 panels.forEach(p => p.style.display = (p.id === target) ? 'block' : 'none');
+
+                // Clear search when switching away from consolidated tab
+                if (target !== 'tab-consolidated') {
+                    const searchInput = document.getElementById('consolidated-search-input');
+                    if (searchInput) searchInput.value = '';
+                } else {
+                    // Initialize search and load all orders when consolidated tab is opened
+                    setTimeout(() => {
+                        initializeConsolidatedSearch();
+                        // Load all orders initially
+                        filterConsolidatedOrders('');
+                    }, 100);
+                }
 
                 // Lazy render per tab (all are async now)
                 try {
@@ -1492,7 +1591,24 @@ function initializeAdminDashboard() {
     function getCustomerType(order){
         const t = String(order && order.orderType || '').toLowerCase();
         if (t === 'walk-in' || t === 'walkin') return 'Walk-in';
-        return (order && order.isGuest) ? 'Guest' : 'Registered User';
+        
+        // Check if it's a guest order
+        if (order && (order.isGuest === true || order.isGuest === 1 || order.isGuest === '1' || !order.user_id || order.user_id === 0 || order.user_id === null)) {
+            return 'Guest';
+        }
+        
+        // Check if user has google_id (Google Auth user)
+        if (order && order.google_id && order.google_id !== null && order.google_id !== '') {
+            return 'Google Auth User';
+        }
+        
+        // Otherwise, it's a regular registered user
+        if (order && order.user_id) {
+            return 'Registered User';
+        }
+        
+        // Default fallback
+        return 'Guest';
     }
     
     // Format status text for better readability
@@ -1879,9 +1995,12 @@ function initializeAdminDashboard() {
 
     async function renderOnline(){
         try {
+            // Show all online/digital orders regardless of status
+            // This includes Guest, Registered User, and Google Auth User orders
             const orders = (await getAllOrders()).filter(o => {
-                const t = String(o.orderType||'').toLowerCase();
-                return (t === 'digital' || t === 'online') && isCompleted(o);
+                const t = String(o.orderType || o.order_type || '').toLowerCase().trim();
+                // Include orders with type 'digital' or 'online', case-insensitive
+                return (t === 'digital' || t === 'online');
             });
             const container = document.getElementById('online-table');
             if (!container) return;
@@ -1891,8 +2010,8 @@ function initializeAdminDashboard() {
                 const itemsCount = items.reduce((s,it)=> s + (Number(it.qty)||1), 0);
                 const drinks = items.map(it=> it.name).join(', ');
                 const sizes = items.map(it=> it.size).join(', ');
-                const ctype = o.isGuest ? 'Guest' : 'Registered User';
-                const customer = o.customerName || o.customerUsername || 'Guest';
+                const ctype = getCustomerType(o);
+                const customer = o.customerName || o.customerUsername || 'Guest Customer';
                 return `<tr>
                     <td>${o.id||''}</td>
                     <td>${customer}</td>
@@ -1925,6 +2044,16 @@ function initializeAdminDashboard() {
     
     // Optional: update order stats periodically (kept lightweight)
     // setInterval(updateOrderStats, 10000);
+    
+    // Initialize search when consolidated tab is active and load all orders
+    const consolidatedTab = document.getElementById('tab-consolidated');
+    if (consolidatedTab && consolidatedTab.style.display !== 'none') {
+        setTimeout(() => {
+            initializeConsolidatedSearch();
+            // Load all orders initially
+            filterConsolidatedOrders('');
+        }, 200);
+    }
     
     switchSection('dashboard');
     // Note: Inventory logs are visible inside the embedded cashier dashboard in the Sales Report (Consolidated) tab

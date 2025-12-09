@@ -106,6 +106,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
             
             if ($passwordValid) {
+                // Start session and set cashier session variables
+                @session_start();
+                $_SESSION['cashier_logged_in'] = true;
+                $_SESSION['cashier_id'] = $cashier['cashier_id'];
+                $_SESSION['cashier_email'] = $cashier['email'];
+                $_SESSION['cashier_branch'] = 'fairview';
+                $_SESSION['cashier_role'] = 'cashier';
+                
                 // Generate token for API authentication
                 $token = base64_encode(json_encode([
                     'user_id' => $cashier['cashier_id'],
@@ -136,6 +144,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             // Fallback: Hardcoded credentials from database if connection fails
             if ($password === 'cashierfairview') {
+                // Start session and set cashier session variables
+                @session_start();
+                $_SESSION['cashier_logged_in'] = true;
+                $_SESSION['cashier_id'] = 1;
+                $_SESSION['cashier_email'] = $email;
+                $_SESSION['cashier_branch'] = 'fairview';
+                $_SESSION['cashier_role'] = 'cashier';
+                
                 // Generate token for API authentication
                 $token = base64_encode(json_encode([
                     'user_id' => 1,

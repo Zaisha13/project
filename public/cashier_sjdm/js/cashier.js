@@ -191,7 +191,8 @@ function initializeCashierDashboard() {
                 if (confirm('Are you sure you want to log out?')) {
                     localStorage.removeItem('isLoggedIn');
                     localStorage.removeItem('currentUser');
-                    window.location.href = '../cashier/login_cashier.php';
+                    localStorage.removeItem('token');
+                    window.location.href = '../cashier/logout.php';
                 }
             });
         }
@@ -200,33 +201,8 @@ function initializeCashierDashboard() {
     // Clear orders handler
     if (clearOrdersBtn) {
         if (isAdminView()) {
-            // Enable for admin embedded view and clear ALL orders across branches
-            clearOrdersBtn.disabled = false;
-            clearOrdersBtn.style.opacity = '';
-            clearOrdersBtn.style.cursor = '';
-            clearOrdersBtn.title = 'Clear all orders across branches';
-            clearOrdersBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                showConfirmModal({
-                    title: 'Clear All Orders',
-                    message: 'This will permanently remove ALL orders across ALL branches. This action cannot be undone.',
-                    confirmText: 'Yes, Clear All',
-                    cancelText: 'Cancel',
-                    onConfirm: async function(){
-                        try {
-                            localStorage.setItem('jessie_orders', JSON.stringify([]));
-                            await renderOrders();
-                            renderCustomers();
-                            updateSalesTotals();
-                            showToastBanner('success', 'All orders cleared successfully.');
-                        } catch (err) {
-                            console.error('Error clearing orders:', err);
-                            showToastBanner('error', 'Error clearing orders.');
-                        }
-                    }
-                });
-            });
+            // Hide the button in admin view - orders are automatically filtered by date
+            clearOrdersBtn.style.display = 'none';
         } else {
             // Disabled for cashier runtime
             clearOrdersBtn.disabled = true;
@@ -387,21 +363,22 @@ function updateSalesTotals() {
             }
         });
         
-    // Count orders (branch-specific unless admin)
-    const totalOrders = branchOrders.length;
-    const pendingOrders = branchOrders.filter(o => 
+    // Count orders - always use today's orders only (consolidated for both branches in admin view)
+    const ordersToCount = todayOrders;
+    const totalOrders = ordersToCount.length;
+    const pendingOrders = ordersToCount.filter(o => 
             o.status === 'Pending' || o.status === 'pending'
         ).length;
-    const approvedOrders = branchOrders.filter(o => 
+    const approvedOrders = ordersToCount.filter(o => 
             o.status === 'Approved' || o.status === 'approved'
         ).length;
-    const ofdOrders = branchOrders.filter(o => 
+    const ofdOrders = ordersToCount.filter(o => 
             o.status === 'Out for Delivery' || o.status === 'out for delivery'
         ).length;
-    const completedOrders = branchOrders.filter(o => 
+    const completedOrders = ordersToCount.filter(o => 
             o.status === 'Completed' || o.status === 'completed'
         ).length;
-    const cancelledOrders = branchOrders.filter(o => 
+    const cancelledOrders = ordersToCount.filter(o => 
             o.status === 'Cancelled' || o.status === 'cancelled'
         ).length;
         
@@ -557,7 +534,60 @@ async function syncOrdersFromDatabase() {
     }
 }
 
-// Render orders table (filtered by branch)
+// Helper function to check if an order is from today
+function isOrderFromToday(order) {
+    if (!order.date && !order.timestamp) return false;
+    
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    // Check using timestamp if available
+    if (order.timestamp) {
+        const orderDate = new Date(order.timestamp);
+        orderDate.setHours(0, 0, 0, 0);
+        return orderDate.getTime() === today.getTime();
+    }
+    
+    // Check using date string
+    if (order.date) {
+        let orderDate;
+        // Try to parse the date string (could be in various formats)
+        if (order.date.includes('/')) {
+            // Format: m/d/Y or d/m/Y
+            const parts = order.date.split('/');
+            if (parts.length === 3) {
+                // Assume m/d/Y format
+                orderDate = new Date(parseInt(parts[2]), parseInt(parts[0]) - 1, parseInt(parts[1]));
+            }
+        } else if (order.date.includes('-')) {
+            // Format: Y-m-d
+            orderDate = new Date(order.date);
+        } else {
+            orderDate = new Date(order.date);
+        }
+        
+        if (orderDate && !isNaN(orderDate.getTime())) {
+            orderDate.setHours(0, 0, 0, 0);
+            return orderDate.getTime() === today.getTime();
+        }
+    }
+    
+    return false;
+}
+
+// Store current search term for filtering
+let currentSearchTerm = '';
+
+// Listen for search messages from parent window (admin dashboard)
+window.addEventListener('message', function(event) {
+    if (event.data && event.data.type === 'filterOrders') {
+        currentSearchTerm = event.data.searchTerm || '';
+        // Re-render orders with search filter
+        renderOrders();
+    }
+});
+
+// Render orders table (filtered by branch and search term)
 async function renderOrders() {
     const ordersTbody = document.getElementById('ordersTbody');
     const noOrdersRow = document.getElementById('no-orders');
@@ -571,16 +601,48 @@ async function renderOrders() {
         const allOrders = await syncOrdersFromDatabase();
         
         // Filter orders by cashier's branch (admin view shows all)
-        const branchOrders = adminView ? allOrders : allOrders.filter(order => branchesMatch(order.branch, cashierBranch));
+        let branchOrders = adminView ? allOrders : allOrders.filter(order => branchesMatch(order.branch, cashierBranch));
+        
+        // For cashiers (non-admin), filter to show only today's orders
+        if (!adminView) {
+            branchOrders = branchOrders.filter(order => isOrderFromToday(order));
+        }
+        
+        // Apply search filter if search term exists
+        if (currentSearchTerm && currentSearchTerm.trim() !== '') {
+            const term = currentSearchTerm.trim().toLowerCase();
+            branchOrders = branchOrders.filter(order => {
+                // Check order ID
+                const orderId = String(order.id || '').toLowerCase();
+                const orderIdFormatted = orderId.replace(/[^a-z0-9]/g, '');
+                const termFormatted = term.replace(/[^a-z0-9]/g, '');
+                
+                // Check customer name
+                const customerName = String(order.customerName || order.customer || order.customerUsername || '').toLowerCase();
+                const customerEmail = String(order.customerEmail || '').toLowerCase();
+                const customerPhone = String(order.customerPhone || '').toLowerCase();
+                
+                // Match against all fields
+                return orderId.includes(term) || 
+                       orderIdFormatted.includes(termFormatted) ||
+                       customerName.includes(term) ||
+                       customerEmail.includes(term) ||
+                       customerPhone.includes(term);
+            });
+        }
+        
         console.log(adminView
-            ? `Admin view: showing all orders (${branchOrders.length}/${allOrders.length})`
-            : `Orders for ${cashierBranch}: ${branchOrders.length} out of ${allOrders.length} total orders`);
+            ? `Admin view: showing ${currentSearchTerm ? 'filtered' : 'all'} orders (${branchOrders.length}/${allOrders.length})`
+            : `Today's orders for ${cashierBranch}: ${branchOrders.length} out of ${allOrders.length} total orders`);
         
         if (branchOrders.length === 0) {
             ordersTbody.innerHTML = '';
             if (noOrdersRow) {
                 noOrdersRow.style.display = '';
-                noOrdersRow.textContent = adminView ? 'No orders available.' : `No orders available for ${cashierBranch}.`;
+                const message = currentSearchTerm 
+                    ? `No orders found matching "${currentSearchTerm}".`
+                    : (adminView ? 'No orders available.' : `No orders available for ${cashierBranch}.`);
+                noOrdersRow.textContent = message;
             }
             return;
         }
@@ -772,7 +834,12 @@ function renderCustomers() {
         const allOrders = JSON.parse(localStorage.getItem('jessie_orders') || '[]');
         
         // Filter orders by cashier's branch (admin view shows all)
-        const branchOrders = adminView ? allOrders : allOrders.filter(order => branchesMatch(order.branch, cashierBranch));
+        let branchOrders = adminView ? allOrders : allOrders.filter(order => branchesMatch(order.branch, cashierBranch));
+        
+        // For cashiers (non-admin), filter to show only today's orders
+        if (!adminView) {
+            branchOrders = branchOrders.filter(order => isOrderFromToday(order));
+        }
         
         if (branchOrders.length === 0) {
             customersTbody.innerHTML = '';
@@ -1186,46 +1253,68 @@ function renderInventory() {
 }
 
 // View detailed report (for cashier's branch)
-function viewDetailedReport() {
+async function viewDetailedReport() {
     try {
         const adminView = isAdminView();
         const cashierBranch = getCashierBranch();
-        const allOrders = JSON.parse(localStorage.getItem('jessie_orders') || '[]');
-        const branchOrders = adminView ? allOrders : allOrders.filter(order => order.branch === cashierBranch);
-        const today = new Date().toDateString();
         
-        const todayOrders = branchOrders.filter(order => {
-            let orderDate;
-            if (order.timestamp) {
-                orderDate = new Date(order.timestamp).toDateString();
-            } else if (order.date) {
-                orderDate = new Date(order.date).toDateString();
-            } else {
-                return false;
-            }
-            return orderDate === today;
-        });
+        // Sync orders from database first to ensure we have the latest data from all branches
+        let allOrders = [];
+        if (typeof syncOrdersFromDatabase === 'function') {
+            allOrders = await syncOrdersFromDatabase();
+        } else {
+            allOrders = JSON.parse(localStorage.getItem('jessie_orders') || '[]');
+        }
         
-        if (todayOrders.length === 0) {
-            alert(adminView ? 'No orders today.' : `No orders today for ${cashierBranch}.`);
+        // For admin view, show ALL orders from ALL branches (consolidated)
+        // For cashiers, filter by branch using branchesMatch for robust matching
+        const branchOrders = adminView ? allOrders : allOrders.filter(order => branchesMatch(order.branch, cashierBranch));
+        
+        // Debug logging for admin view
+        if (adminView) {
+            console.log(`Admin View: Loading detailed sales report with ${allOrders.length} total orders from all branches`);
+            const fairviewOrders = allOrders.filter(o => branchesMatch(o.branch, 'SM Fairview'));
+            const sjdmOrders = allOrders.filter(o => branchesMatch(o.branch, 'SM San Jose del Monte'));
+            console.log(`  - SM Fairview orders: ${fairviewOrders.length}`);
+            console.log(`  - SM San Jose del Monte orders: ${sjdmOrders.length}`);
+        }
+        
+        // For cashiers, filter to show only today's orders; for admin, show all orders
+        const ordersToShow = adminView ? branchOrders : (() => {
+            const today = new Date().toDateString();
+            return branchOrders.filter(order => {
+                let orderDate;
+                if (order.timestamp) {
+                    orderDate = new Date(order.timestamp).toDateString();
+                } else if (order.date) {
+                    orderDate = new Date(order.date).toDateString();
+                } else {
+                    return false;
+                }
+                return orderDate === today;
+            });
+        })();
+        
+        if (ordersToShow.length === 0) {
+            alert(adminView ? 'No orders available.' : `No orders today for ${cashierBranch}.`);
             return;
         }
         
         // Calculate statistics
-        const totalOrders = todayOrders.length;
-        const approvedCount = todayOrders.filter(o => {
+        const totalOrders = ordersToShow.length;
+        const approvedCount = ordersToShow.filter(o => {
             const s = (o.status || '').toLowerCase();
             return s === 'approved';
         }).length;
-        const completedCount = todayOrders.filter(o => {
+        const completedCount = ordersToShow.filter(o => {
             const s = (o.status || '').toLowerCase();
             return s === 'completed';
         }).length;
-        const pendingCount = todayOrders.filter(o => {
+        const pendingCount = ordersToShow.filter(o => {
             const s = (o.status || '').toLowerCase();
             return s === 'pending';
         }).length;
-        const cancelledCount = todayOrders.filter(o => {
+        const cancelledCount = ordersToShow.filter(o => {
             const s = (o.status || '').toLowerCase();
             return s === 'cancelled';
         }).length;
@@ -1238,7 +1327,7 @@ function viewDetailedReport() {
         let cancelledSales = 0;
         let outForDeliverySales = 0;
 
-        todayOrders.forEach(order => {
+        ordersToShow.forEach(order => {
             const orderTotal = parseFloat(order.total || 0);
             // Get status - use the EXACT same logic as the count calculation above
             const statusLower = (order.status || order.order_status || '').toString().trim().toLowerCase();
@@ -1260,7 +1349,7 @@ function viewDetailedReport() {
         
         // Build HTML content
         const modalBody = document.getElementById('reportModalBody');
-        const formattedDate = new Date().toLocaleDateString('en-US', { 
+        const formattedDate = adminView ? 'All Time' : new Date().toLocaleDateString('en-US', { 
             weekday: 'long', 
             year: 'numeric', 
             month: 'long', 
@@ -1309,7 +1398,7 @@ function viewDetailedReport() {
                         </tr>
                     </thead>
                     <tbody>
-                        ${todayOrders.map(order => {
+                        ${ordersToShow.map(order => {
                             const itemsCount = (order.items || []).reduce((sum, item) => sum + (item.qty || 1), 0);
                             const status = order.status === 'pending' ? 'Pending' : (order.status || 'Pending');
                             let statusColor = '#f59e0b'; // Default: Pending (orange)
@@ -1374,7 +1463,7 @@ function viewDetailedReport() {
             
             <div class="report-total" style="flex-direction: column; align-items: flex-start; gap: 8px;">
                 <div style="display: flex; justify-content: space-between; width: 100%;">
-                    <span class="report-total-label">Total Sales Today (Excludes Cancelled)</span>
+                    <span class="report-total-label">Total Sales ${adminView ? '(All Time)' : 'Today'} (Excludes Cancelled)</span>
                     <span class="report-total-amount">₱${totalSales.toFixed(2)}</span>
                 </div>
                 <div style="font-size: 14px; font-weight: 600; color: rgba(255, 255, 255, 0.9);">
